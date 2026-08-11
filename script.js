@@ -262,6 +262,8 @@ function resetGame() {
     generateJob();
 }
 
-// Jalankan fungsi inisialisasi secara langsung tanpa menunggu DOMContentLoaded
-generateJob();
-updateStats();
+// AMAN: Memastikan browser membaca HTML dulu baru menjalankan data awal game
+window.onload = function() {
+    generateJob();
+    updateStats();
+};
