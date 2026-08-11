@@ -1,12 +1,12 @@
 // ==========================================
-// PENGGANTI GAME KETIK: SUWIT LAWAN BOS (GUNTING BATU KERTAS)
+// PENGGANTI: GAME MATEMATIKA ACAK & JUMLAH TAP RANDOM
 // ==========================================
+let jawabanMatematikaBenar = 0; // Variabel baru untuk menyimpan jawaban kuis
+
 function mulaiMinigameUtama() {
     if (money <= 0 || stress >= 100) return;
-    
-    // Matikan hitung mundur timer lama karena game suwit tidak pakai buru-buru waktu
-    clearInterval(timerInterval); 
-    document.getElementById('game-timer').innerText = "-";
+    sisaWaktu = 5;
+    document.getElementById('game-timer').innerText = sisaWaktu;
     document.getElementById('game-modal').style.display = 'flex';
 
     if (lowonganAktif.tipeGame === "click") {
@@ -14,64 +14,95 @@ function mulaiMinigameUtama() {
         document.getElementById('type-game-elements').style.display = 'none';
         
         tumpukanClick = 0;
+        
+        // 🎲 MEKANIK BARU: Mengacak target klik antara 8 sampai 15 kali
+        const targetClickRandom = Math.floor(Math.random() * (15 - 8 + 1)) + 8;
+        
+        // Simpan target acak ini ke dalam variabel global targetClick agar dibaca fungsi hitungTap
+        window.targetClickAktif = targetClickRandom; 
+
         document.getElementById('game-instruction').innerText = `Tugasmu: ${lowonganAktif.tugas}`;
         document.getElementById('game-progress').style.width = "0%";
-        document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (0/${targetClick})`;
-        
-        // Aktifkan timer khusus untuk game click saja
-        sisaWaktu = 5;
-        document.getElementById('game-timer').innerText = sisaWaktu;
-        timerInterval = setInterval(() => {
-            sisaWaktu--;
-            document.getElementById('game-timer').innerText = sisaWaktu;
-            if (sisaWaktu <= 0) {
-                clearInterval(timerInterval);
-                gagalMinigameUtama();
-            }
-        }, 1000);
+        document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (0/${targetClickRandom})`;
         
     } else if (lowonganAktif.tipeGame === "type") {
-        // Manfaatkan kotak game ketik lama untuk diubah jadi area tombol Suwit
         document.getElementById('tap-game-elements').style.display = 'none';
         document.getElementById('type-game-elements').style.display = 'block';
         
-        document.getElementById('game-instruction').innerText = "Adu nasib! Menangkan Suwit melawan Bos Besar untuk diterima kerja!";
+        // 🧠 MEKANIK BARU: Membuat kuis matematika acak
+        const angka1 = Math.floor(Math.random() * 9) + 2; // Angka 2-10
+        const angka2 = Math.floor(Math.random() * 8) + 2; // Angka 2-9
+        const tipeOperasi = Math.random() > 0.5 ? "+" : "x";
         
-        // Ubah tampilan input ketik menjadi 3 tombol Suwit (Batu, Gunting, Kertas)
-        document.getElementById('type-game-elements').innerHTML = `
-            <div class="word-target" id="target-word-display" style="font-size: 15px; background: #e0f2fe; color: #0369a1;">Pilih Senjatamu:</div>
-            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 15px;">
-                <button class="btn" style="background: #38bdf8; padding: 10px;" onclick="mainSuwit('batu')">✊ BATU</button>
-                <button class="btn" style="background: #38bdf8; padding: 10px;" onclick="mainSuwit('gunting')">✌️ GUNTING</button>
-                <button class="btn" style="background: #38bdf8; padding: 10px;" onclick="mainSuwit('kertas')">✋ KERTAS</button>
-            </div>
-            <div id="suwit-result" style="margin-top: 15px; font-weight: bold; font-size: 14px; color: #475569;"></div>
-        `;
+        if (tipeOperasi === "+") {
+            jawabanMatematikaBenar = angka1 + angka2;
+        } else {
+            jawabanMatematikaBenar = angka1 * angka2;
+        }
+
+        document.getElementById('game-instruction').innerText = "Masukkan data baru untuk AI! Hitung cepat sebelum sistem crash:";
+        document.getElementById('target-word-display').innerText = `${angka1} ${tipeOperasi} ${angka2} = ?`;
+        
+        // Manfaatkan kolom input teks lama untuk mengetik jawaban angka
+        const inputField = document.getElementById('type-game-input');
+        inputField.value = "";
+        inputField.placeholder = "Ketik jawaban angka di sini...";
+        inputField.setAttribute("type", "number"); // Ubah input jadi tipe angka agar pas di HP
+        
+        setTimeout(() => { inputField.focus(); }, 100);
+    }
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        sisaWaktu--;
+        document.getElementById('game-timer').innerText = sisaWaktu;
+        if (sisaWaktu <= 0) {
+            clearInterval(timerInterval);
+            gagalMinigameUtama();
+        }
+    }, 1000);
+}
+
+function hitungTap() {
+    tumpukanClick++;
+    // Menggunakan target acak yang sudah disimpan di window.targetClickAktif
+    const target = window.targetClickAktif || 12; 
+    let persentase = (tumpukanClick / target) * 100;
+    
+    document.getElementById('game-progress').style.width = `${persentase}%`;
+    document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (${tumpukanClick}/${target})`;
+    
+    if (tumpukanClick >= target) {
+        clearInterval(timerInterval);
+        suksesMinigameUtama();
     }
 }
 
-// Logika penentu menang/kalah suwit lawan bot Bos
-function mainSuwit(pilihanPemain) {
-    const pilihanBos = ["batu", "gunting", "kertas"][Math.floor(Math.random() * 3)];
-    const emojiMap = { batu: "✊", gunting: "✌️", kertas: "✋" };
-    
-    let hasilTeks = `Kamu pilih ${emojiMap[pilihanPemain]} vs Bos pilih ${emojiMap[pilihanBos]}.<br>`;
-    
-    if (pilihanPemain === pilihanBos) {
-        // Jika seri, pemain dipaksa suwit ulang sampai ada yang menang/kalah
-        document.getElementById('suwit-result').innerHTML = hasilTeks + "🔄 SERI! Bos minta ulang, pilih lagi!";
-    } else if (
-        (pilihanPemain === "batu" && pilihanBos === "gunting") ||
-        (pilihanPemain === "gunting" && pilihanBos === "kertas") ||
-        (pilihanPemain === "kertas" && pilihanBos === "batu")
-    ) {
-        // Pemain menang
-        document.getElementById('suwit-result').innerHTML = hasilTeks + "🎉 MENANG!";
-        setTimeout(() => { suksesMinigameUtama(); }, 1200);
-    } else {
-        // Pemain kalah
-        document.getElementById('suwit-result').innerHTML = hasilTeks + "❌ KALAHAHAN!";
-        setTimeout(() => { gagalMinigameUtama(); }, 1200);
+function cekInputKetik() {
+    const inputVal = parseInt(document.getElementById('type-game-input').value);
+    // Cek apakah ketikan angka pemain sama dengan jawaban matematika yang benar
+    if (inputVal === jawabanMatematikaBenar) {
+        clearInterval(timerInterval);
+        suksesMinigameUtama();
     }
+}
+
+function suksesMinigameUtama() {
+    document.getElementById('game-modal').style.display = 'none';
+    money += lowonganAktif.salary;
+    stress += lowonganAktif.stress;
+    day++;
+    
+    picuAnimasiUang(lowonganAktif.salary, false);
+    alert(`🎉 Sukses! Gaji Rp ${lowonganAktif.salary.toLocaleString('id-ID')} berhasil masuk rekening.`);
+    selesaiSiklusHari();
+}
+
+function gagalMinigameUtama() {
+    document.getElementById('game-modal').style.display = 'none';
+    stress += 35;
+    day++;
+    alert("❌ KONTRAK PUTUS! Data salah atau pengerjaan lemburmu terlalu lambat. Gaji hangus (Stres +35).");
+    selesaiSiklusHari();
 }
 
