@@ -32,6 +32,7 @@ let kurirInterval = null;
 // ==========================================
 function picuAnimasiUang(jumlah, apakahMinus = false) {
     const moneyBox = document.getElementById('money-box');
+    if (!moneyBox) return;
     const teksAnimasi = document.createElement('span');
     teksAnimasi.className = 'money-animation';
     if (apakahMinus) {
@@ -198,6 +199,7 @@ function mulaiMinigameKurir() {
 
 function acakPosisiMakanan() {
     const targetBtn = document.getElementById('food-target-btn');
+    if (!targetBtn) return;
     targetBtn.innerText = daftarMakanan[Math.floor(Math.random() * daftarMakanan.length)];
     
     const xRand = Math.floor(Math.random() * 160) - 80; 
@@ -260,7 +262,6 @@ function resetGame() {
     generateJob();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    generateJob();
-    updateStats();
-});
+// Jalankan fungsi inisialisasi secara langsung tanpa menunggu DOMContentLoaded
+generateJob();
+updateStats();
