@@ -1,6 +1,6 @@
 // Database lowongan kerja random
 const lowonganDatabase = [
-    { pt: "PT. Agensi Berdikari", title: "Social Media Intern", salary: 1500000, desc: "Jobdesk: Ngonten, edit video, megang 5 akun, merangkap jadi BA. Harus stanby 24 jam.", stress: 25, tugas: "Balas chat revisi klien" },
+    { pt: "PT. Agensi Berdikari", title: "Social Media Intern", salary: 1500000, desc: "Jobdesk: Ngonten, edit video, megang 5 akun, merangkap jadi BA. Harus standby 24 jam.", stress: 25, tugas: "Balas chat revisi klien" },
     { pt: "CV. Berkah Judol", title: "Admin Slot Gacor", salary: 12000000, desc: "Gaji gede, bonus harian melimpah. Risiko: Tiap malam deg-degan digerebek polisi.", stress: 45, tugas: "Hapus barang bukti server" },
     { pt: "Startup Unicorn Corp", title: "Junior Developer", salary: 6000000, desc: "Kerja WFO 6 hari seminggu. Diwajibkan lembur tanpa dibayar demi loyalitas perusahaan.", stress: 35, tugas: "Benerin eror server pas sahur" },
     { pt: "Warung Seblak Mewah", title: "Kasir & Akuntan", salary: 2500000, desc: "Menghitung ribuan transaksi per hari secara manual. Menghadapi pembeli emosional.", stress: 20, tugas: "Ngitung kembalian emak-emak" },
@@ -10,6 +10,9 @@ const lowonganDatabase = [
 let day = 1;
 let money = 1000000;
 let stress = 0;
+
+// Menyimpan data lowongan yang sedang aktif di layar
+let lowonganAktif = {};
 
 // Variabel Kontrol Minigame
 let tumpukanClick = 0;
@@ -30,24 +33,24 @@ function updateStats() {
 }
 
 function generateJob() {
-    const randomJob = lowonganDatabase[Math.floor(Math.random() * lowonganDatabase.length)];
-    document.getElementById('job-company').innerText = randomJob.pt;
-    document.getElementById('job-title').innerText = randomJob.title;
-    document.getElementById('job-salary').innerText = randomJob.salary.toLocaleString('id-ID');
-    document.getElementById('job-desc').innerText = randomJob.desc;
+    // Pilih lowongan acak dan simpan ke variabel global objek agar aman
+    lowonganAktif = lowonganDatabase[Math.floor(Math.random() * lowonganDatabase.length)];
     
-    const dataEl = document.getElementById('job-card-data');
-    dataEl.dataset.salary = randomJob.salary;
-    dataEl.dataset.stress = randomJob.stress;
-    dataEl.dataset.tugas = randomJob.tugas;
+    document.getElementById('job-company').innerText = lowonganAktif.pt;
+    document.getElementById('job-title').innerText = lowonganAktif.title;
+    document.getElementById('job-salary').innerText = lowonganAktif.salary.toLocaleString('id-ID');
+    document.getElementById('job-desc').innerText = lowonganAktif.desc;
 }
 
-// Logika Memulai Minigame Kerja
+// Fungsi Memulai Minigame Kerja
 function mulaiMinigame() {
+    // Mencegah game berjalan jika statusnya sudah kalah
+    if (money <= 0 || stress >= 100) return;
+
     tumpukanClick = 0;
     sisaWaktu = 5;
     
-    const tugasKerja = document.getElementById('job-card-data').dataset.tugas || "Kerja Rodi";
+    const tugasKerja = lowonganAktif.tugas || "Kerja Rodi";
     document.getElementById('game-instruction').innerText = `Tugasmu: ${tugasKerja}! Klik secepatnya sebelum bos marah!`;
     document.getElementById('game-timer').innerText = sisaWaktu;
     document.getElementById('game-progress').style.width = "0%";
@@ -68,7 +71,6 @@ function mulaiMinigame() {
     }, 1000);
 }
 
-// Menghitung setiap klik dari user
 function hitungTap() {
     tumpukanClick++;
     let persentase = (tumpukanClick / targetClick) * 100;
@@ -83,22 +85,19 @@ function hitungTap() {
 
 function suksesMinigame() {
     document.getElementById('game-modal').style.display = 'none';
-    const dataEl = document.getElementById('job-card-data');
-    const salary = parseInt(dataEl.dataset.salary) || 5000000;
-    const addStress = parseInt(dataEl.dataset.stress) || 30;
     
-    money += salary;
-    stress += addStress;
+    money += lowonganAktif.salary;
+    stress += lowonganAktif.stress;
     day++;
     
-    alert(`🎉 Sukses! Target kerjaan kelar. Gaji Rp ${salary.toLocaleString('id-ID')} masuk rekening.`);
+    alert(`🎉 Sukses! Target kerjaan kelar. Gaji Rp ${lowonganAktif.salary.toLocaleString('id-ID')} masuk rekening.`);
     
     selesaiSiklusHari();
 }
 
 function gagalMinigame() {
     document.getElementById('game-modal').style.display = 'none';
-    stress += 40; // Gagal kerjaan bikin stres melonjak drastis
+    stress += 40; 
     day++;
     
     alert("❌ KAMU DIPECAT! Kamu terlalu lambat bekerja. Gaji hangus, dan bos memaki-maki kamu (Stres +40).");
@@ -115,6 +114,8 @@ function selesaiSiklusHari() {
 }
 
 function skipDay() {
+    if (money <= 0 || stress >= 100) return;
+
     money -= 50000;
     stress -= 8;
     if (stress < 0) stress = 0;
@@ -144,8 +145,8 @@ function showGameOver(text) {
         <p style="margin-bottom: 15px;">${text}</p>
         <strong style="display:block; margin-bottom: 15px; color:#1e293b;">Kamu berhasil bertahan hidup selama: ${day} Hari</strong>
         <div style="display:flex; flex-direction:column; gap:10px;">
-            <button class="btn" style="background:#1d9bf0; color:white;" onclick="shareGame('twitter')">🐦 Share Hasil ke X (Twitter)</button>
-            <button class="btn" style="background:#25d366; color:white;" onclick="shareGame('wa')">💬 Share ke WhatsApp</button>
+            <button class="btn" style="background:#1d9bf0; color:white; box-shadow:none;" onclick="shareGame('twitter')">🐦 Share Hasil ke X (Twitter)</button>
+            <button class="btn" style="background:#25d366; color:white; box-shadow:none;" onclick="shareGame('wa')">💬 Share ke WhatsApp</button>
         </div>
     `;
     document.getElementById('gameover-modal').style.display = 'flex';
@@ -171,8 +172,9 @@ function resetGame() {
     generateJob();
 }
 
-// Inisialisasi awal saat halaman dibuka
-window.onload = function() {
+// Menjalankan inisialisasi dengan aman setelah seluruh komponen HTML ter-load
+document.addEventListener("DOMContentLoaded", function() {
     generateJob();
     updateStats();
-};
+});
+
