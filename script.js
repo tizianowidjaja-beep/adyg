@@ -1,24 +1,48 @@
-// Database lowongan kerja random
+// ==========================================
+// SECTION 1: DATABASE & VARIABLE UTAMA
+// ==========================================
 const lowonganDatabase = [
-    { pt: "PT. Agensi Berdikari", title: "Social Media Intern", salary: 1500000, desc: "Jobdesk: Ngonten, edit video, megang 5 akun, merangkap jadi BA. Harus standby 24 jam.", stress: 25, tugas: "Balas chat revisi klien" },
-    { pt: "CV. Berkah Judol", title: "Admin Slot Gacor", salary: 12000000, desc: "Gaji gede, bonus harian melimpah. Risiko: Tiap malam deg-degan digerebek polisi.", stress: 45, tugas: "Hapus barang bukti server" },
-    { pt: "Startup Unicorn Corp", title: "Junior Developer", salary: 6000000, desc: "Kerja WFO 6 hari seminggu. Diwajibkan lembur tanpa dibayar demi loyalitas perusahaan.", stress: 35, tugas: "Benerin eror server pas sahur" },
-    { pt: "Warung Seblak Mewah", title: "Kasir & Akuntan", salary: 2500000, desc: "Menghitung ribuan transaksi per hari secara manual. Menghadapi pembeli emosional.", stress: 20, tugas: "Ngitung kembalian emak-emak" },
-    { pt: "PT. AI Masa Depan", title: "Prompt Engineer", salary: 8000000, desc: "Ngobrol sama robot seharian. Sering kena mental karena robotnya lebih pinter dari kamu.", stress: 30, tugas: "Ngetik perintah chatbot ngambek" }
+    { pt: "PT. Agensi Berdikari", title: "Social Media Intern", salary: 1500000, desc: "Jobdesk: Ngonten, edit video, megang 5 akun. Harus standby 24 jam.", stress: 22, tipeGame: "click", tugas: "Balas chat revisi klien secepatnya!" },
+    { pt: "CV. Berkah Judol", title: "Admin Slot Gacor", salary: 12000000, desc: "Gaji gede, bonus harian melimpah. Risiko: Tiap malam deg-degan digerebek polisi.", stress: 45, tipeGame: "type", tugas: "KETIK KATA KUNCI AMANKAN SERVER:", kataTarget: "BERSIHKAN_LOGS_SEKARANG" },
+    { pt: "Startup Unicorn Corp", title: "Junior Developer", salary: 6000000, desc: "Kerja WFO 6 hari seminggu. Diwajibkan lembur tanpa dibayar demi loyalitas.", stress: 32, tipeGame: "type", tugas: "KETIK SYNTAX PERBAIKAN BUG:", kataTarget: "sudo_systemctl_restart" },
+    { pt: "Warung Seblak Mewah", title: "Kasir & Akuntan", salary: 2500000, desc: "Menghitung ribuan transaksi manual. Menghadapi pembeli emosional.", stress: 18, tipeGame: "click", tugas: "Hitung kembalian emak-emak ngamuk!" },
+    { pt: "PT. AI Masa Depan", title: "Prompt Engineer", salary: 8000000, desc: "Ngobrol sama robot seharian. Sering kena mental karena AI-nya suka ngambek.", stress: 28, tipeGame: "type", tugas: "KETIK PROMPT PENENANG AI:", kataTarget: "JanganNgambekRobotSayang" }
 ];
+
+const daftarMakanan = ["🍔", "🍕", "🍜", "🍟", "🥤", "🍗", "🍩"];
 
 let day = 1;
 let money = 1000000;
 let stress = 0;
-
-// Menyimpan data lowongan yang sedang aktif di layar
 let lowonganAktif = {};
 
-// Variabel Kontrol Minigame
+// Variabel Kontrol Minigame Utama
 let tumpukanClick = 0;
-const targetClick = 10;
+const targetClick = 12; 
 let sisaWaktu = 5;
 let timerInterval = null;
+
+// Variabel Kontrol Kurir Sampingan
+let jumlahPesanan = 0;
+let sisaWaktuKurir = 8;
+let kurirInterval = null;
+
+// ==========================================
+// SECTION 2: LOGIKA LOGISTIK & ANIMASI STATUS
+// ==========================================
+function picuAnimasiUang(jumlah, apakahMinus = false) {
+    const moneyBox = document.getElementById('money-box');
+    const teksAnimasi = document.createElement('span');
+    teksAnimasi.className = 'money-animation';
+    if (apakahMinus) {
+        teksAnimasi.classList.add('money-loss');
+        teksAnimasi.innerText = `-Rp ${jumlah.toLocaleString('id-ID')}`;
+    } else {
+        teksAnimasi.innerText = `+Rp ${jumlah.toLocaleString('id-ID')}`;
+    }
+    moneyBox.appendChild(teksAnimasi);
+    setTimeout(() => { teksAnimasi.remove(); }, 1500);
+}
 
 function updateStats() {
     document.getElementById('day').innerText = day;
@@ -26,83 +50,18 @@ function updateStats() {
     document.getElementById('stress').innerText = stress;
     
     if (money <= 0) {
-        showGameOver("Kamu bangkrut! Uangmu Rp 0, tidak bisa beli makan dan berakhir jadi gelandangan.");
+        showGameOver("Kamu bangkrut! Uangmu habis total, tidak bisa bayar kosan dan makan seblak.");
     } else if (stress >= 100) {
-        showGameOver("Kamu kena mental breakdown! Stres mencapai 100% karena tekanan dunia kerja.");
+        showGameOver("Kamu kena mental breakdown! Tingkat stres mencapai 100% karena eksploitasi dunia kerja.");
     }
 }
 
 function generateJob() {
-    // Pilih lowongan acak dan simpan ke variabel global objek agar aman
     lowonganAktif = lowonganDatabase[Math.floor(Math.random() * lowonganDatabase.length)];
-    
     document.getElementById('job-company').innerText = lowonganAktif.pt;
     document.getElementById('job-title').innerText = lowonganAktif.title;
     document.getElementById('job-salary').innerText = lowonganAktif.salary.toLocaleString('id-ID');
     document.getElementById('job-desc').innerText = lowonganAktif.desc;
-}
-
-// Fungsi Memulai Minigame Kerja
-function mulaiMinigame() {
-    // Mencegah game berjalan jika statusnya sudah kalah
-    if (money <= 0 || stress >= 100) return;
-
-    tumpukanClick = 0;
-    sisaWaktu = 5;
-    
-    const tugasKerja = lowonganAktif.tugas || "Kerja Rodi";
-    document.getElementById('game-instruction').innerText = `Tugasmu: ${tugasKerja}! Klik secepatnya sebelum bos marah!`;
-    document.getElementById('game-timer').innerText = sisaWaktu;
-    document.getElementById('game-progress').style.width = "0%";
-    document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (0/${targetClick})`;
-    
-    document.getElementById('game-modal').style.display = 'flex';
-    
-    // Mulai Hitung Mundur Waktu
-    clearInterval(timerInterval);
-    timerInterval = setInterval(function() {
-        sisaWaktu--;
-        document.getElementById('game-timer').innerText = sisaWaktu;
-        
-        if (sisaWaktu <= 0) {
-            clearInterval(timerInterval);
-            gagalMinigame();
-        }
-    }, 1000);
-}
-
-function hitungTap() {
-    tumpukanClick++;
-    let persentase = (tumpukanClick / targetClick) * 100;
-    document.getElementById('game-progress').style.width = `${persentase}%`;
-    document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (${tumpukanClick}/${targetClick})`;
-    
-    if (tumpukanClick >= targetClick) {
-        clearInterval(timerInterval);
-        suksesMinigame();
-    }
-}
-
-function suksesMinigame() {
-    document.getElementById('game-modal').style.display = 'none';
-    
-    money += lowonganAktif.salary;
-    stress += lowonganAktif.stress;
-    day++;
-    
-    alert(`🎉 Sukses! Target kerjaan kelar. Gaji Rp ${lowonganAktif.salary.toLocaleString('id-ID')} masuk rekening.`);
-    
-    selesaiSiklusHari();
-}
-
-function gagalMinigame() {
-    document.getElementById('game-modal').style.display = 'none';
-    stress += 40; 
-    day++;
-    
-    alert("❌ KAMU DIPECAT! Kamu terlalu lambat bekerja. Gaji hangus, dan bos memaki-maki kamu (Stres +40).");
-    
-    selesaiSiklusHari();
 }
 
 function selesaiSiklusHari() {
@@ -115,15 +74,13 @@ function selesaiSiklusHari() {
 
 function skipDay() {
     if (money <= 0 || stress >= 100) return;
-
     money -= 50000;
     stress -= 8;
     if (stress < 0) stress = 0;
     day++;
-    
+    picuAnimasiUang(50000, true);
     selesaiSiklusHari();
 }
-
 function checkTax() {
     if (day % 3 === 0) {
         let potongan = Math.round(money * 0.47);
@@ -132,6 +89,7 @@ function checkTax() {
         document.getElementById('tax-day').innerText = day;
         document.getElementById('tax-amount').innerText = potongan.toLocaleString('id-ID');
         document.getElementById('tax-modal').style.display = 'flex';
+        picuAnimasiUang(potongan, true);
     }
 }
 
@@ -140,6 +98,139 @@ function closeTaxModal() {
     updateStats();
 }
 
+// ==========================================
+// SECTION 3: KENDALI MINIGAME UTAMA & SAMPINGAN
+// ==========================================
+function mulaiMinigameUtama() {
+    if (money <= 0 || stress >= 100) return;
+    sisaWaktu = 5;
+    document.getElementById('game-timer').innerText = sisaWaktu;
+    document.getElementById('game-modal').style.display = 'flex';
+
+    if (lowonganAktif.tipeGame === "click") {
+        document.getElementById('tap-game-elements').style.display = 'block';
+        document.getElementById('type-game-elements').style.display = 'none';
+        
+        tumpukanClick = 0;
+        document.getElementById('game-instruction').innerText = `Tugasmu: ${lowonganAktif.tugas}`;
+        document.getElementById('game-progress').style.width = "0%";
+        document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (0/${targetClick})`;
+    } else if (lowonganAktif.tipeGame === "type") {
+        document.getElementById('tap-game-elements').style.display = 'none';
+        document.getElementById('type-game-elements').style.display = 'block';
+        
+        document.getElementById('game-instruction').innerText = lowonganAktif.tugas;
+        document.getElementById('target-word-display').innerText = lowonganAktif.kataTarget;
+        document.getElementById('type-game-input').value = "";
+        setTimeout(() => { document.getElementById('type-game-input').focus(); }, 100);
+    }
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        sisaWaktu--;
+        document.getElementById('game-timer').innerText = sisaWaktu;
+        if (sisaWaktu <= 0) {
+            clearInterval(timerInterval);
+            gagalMinigameUtama();
+        }
+    }, 1000);
+}
+
+function hitungTap() {
+    tumpukanClick++;
+    let persentase = (tumpukanClick / targetClick) * 100;
+    document.getElementById('game-progress').style.width = `${persentase}%`;
+    document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (${tumpukanClick}/${targetClick})`;
+    
+    if (tumpukanClick >= targetClick) {
+        clearInterval(timerInterval);
+        suksesMinigameUtama();
+    }
+}
+
+function cekInputKetik() {
+    const inputVal = document.getElementById('type-game-input').value;
+    if (inputVal === lowonganAktif.kataTarget) {
+        clearInterval(timerInterval);
+        suksesMinigameUtama();
+    }
+}
+
+function suksesMinigameUtama() {
+    document.getElementById('game-modal').style.display = 'none';
+    money += lowonganAktif.salary;
+    stress += lowonganAktif.stress;
+    day++;
+    
+    picuAnimasiUang(lowonganAktif.salary, false);
+    alert(`🎉 Kerja Bagus! Gaji Rp ${lowonganAktif.salary.toLocaleString('id-ID')} masuk rekening.`);
+    selesaiSiklusHari();
+}
+
+function gagalMinigameUtama() {
+    document.getElementById('game-modal').style.display = 'none';
+    stress += 35;
+    day++;
+    alert("❌ KAMU DIPECAT! Kerjamu lambat dan banyak eror. Gaji hangus, Bos memarahimu (Stres +35).");
+    selesaiSiklusHari();
+}
+
+function mulaiMinigameKurir() {
+    if (money <= 0 || stress >= 100) return;
+    jumlahPesanan = 0;
+    sisaWaktuKurir = 8;
+    
+    document.getElementById('delivery-count').innerText = jumlahPesanan;
+    document.getElementById('kurir-timer').innerText = sisaWaktuKurir;
+    document.getElementById('kurir-modal').style.display = 'flex';
+    acakPosisiMakanan();
+
+    clearInterval(kurirInterval);
+    kurirInterval = setInterval(() => {
+        sisaWaktuKurir--;
+        document.getElementById('kurir-timer').innerText = sisaWaktuKurir;
+        if (sisaWaktuKurir <= 0) {
+            clearInterval(kurirInterval);
+            selesaiKerjaKurir();
+        }
+    }, 1000);
+}
+
+function acakPosisiMakanan() {
+    const targetBtn = document.getElementById('food-target-btn');
+    targetBtn.innerText = daftarMakanan[Math.floor(Math.random() * daftarMakanan.length)];
+    
+    const xRand = Math.floor(Math.random() * 160) - 80; 
+    const yRand = Math.floor(Math.random() * 30) - 15; 
+    targetBtn.style.transform = `translate(${xRand}px, ${yRand}px)`;
+}
+
+function tangkapMakanan() {
+    jumlahPesanan++;
+    document.getElementById('delivery-count').innerText = jumlahPesanan;
+    acakPosisiMakanan();
+}
+
+function selesaiKerjaKurir() {
+    document.getElementById('kurir-modal').style.display = 'none';
+    
+    const totalGajiKurir = jumlahPesanan * 35000;
+    const totalStresKurir = jumlahPesanan * 3;
+    
+    money += totalGajiKurir;
+    stress += totalStresKurir;
+    day++;
+    
+    if(totalGajiKurir > 0) {
+        picuAnimasiUang(totalGajiKurir, false);
+    }
+    alert(`🛵 Shift Selesai! Mengantar ${jumlahPesanan} pesanan. Upah Rp ${totalGajiKurir.toLocaleString('id-ID')} cair, Stres +${totalStresKurir} karena macet.`);
+    selesaiSiklusHari();
+}
+
+// ==========================================
+// SECTION 4: KONDISI GAME OVER & INITIALIZATION
+// ==========================================
 function showGameOver(text) {
     document.getElementById('gameover-reason').innerHTML = `
         <p style="margin-bottom: 15px;">${text}</p>
@@ -153,13 +244,10 @@ function showGameOver(text) {
 }
 
 function shareGame(platform) {
-    const text = `Gue bertahan selama ${day} hari di game Simulasi LinkedOut sebelum dipecat & dimiskinkan pajak 47%! Berani coba kalahkan rekor gue? Main di: ${window.location.href}`;
-    let url = '';
-    if (platform === 'twitter') {
-        url = `https://twitter.com{encodeURIComponent(text)}`;
-    } else if (platform === 'wa') {
-        url = `https://whatsapp.com{encodeURIComponent(text)}`;
-    }
+    const text = `Gue cuma bertahan ${day} hari di game Simulasi LinkedOut! Udah narik kurir makanan & kantoran tetap dimiskinkan pajak 47%. Coba rekor lu: ${window.location.href}`;
+    let url = platform === 'twitter' 
+        ? `https://twitter.com{encodeURIComponent(text)}`
+        : `https://whatsapp.com{encodeURIComponent(text)}`;
     window.open(url, '_blank');
 }
 
@@ -172,9 +260,7 @@ function resetGame() {
     generateJob();
 }
 
-// Menjalankan inisialisasi dengan aman setelah seluruh komponen HTML ter-load
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     generateJob();
     updateStats();
 });
-
