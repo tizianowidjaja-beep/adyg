@@ -10,47 +10,38 @@
         
         /* Frame HP */
         .phone { width: 100%; max-width: 380px; height: 680px; border: 12px solid #334155; border-radius: 40px; background: #f8fafc; color: #1e293b; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        
-        /* Notch/Kamera HP */
         .notch { width: 120px; height: 20px; background: #334155; position: absolute; top: 0; left: 50%; transform: translateX(-50%); border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
+        .header { background: #0077b5; color: white; padding: 25px 15px 15px 15px; text-align: center; font-weight: bold; font-size: 20px; letter-spacing: 0.5px; }
         
-        /* Header Aplikasi */
-        .header { background: #0077b5; color: white; padding: 25px 15px 15px 15px; text-align: center; font-weight: bold; font-size: 20px; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        
-        /* Indikator Status */
+        /* Status Bar */
         .stats-bar { display: flex; justify-content: space-between; background: #e2e8f0; padding: 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #cbd5e1; }
-        .stat-box { background: white; padding: 5px 10px; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .stat-box { background: white; padding: 5px 10px; border-radius: 20px; }
         .danger { color: #dc2626; }
         
-        /* Area Konten Utama */
+        /* Konten */
         .content { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; justify-content: space-between; background: #f1f5f9; }
-        
-        /* Kartu Lowongan Kerja */
         .job-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); text-align: center; margin-bottom: 15px; }
         .company { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
         .title { font-size: 18px; color: #0f172a; font-weight: 700; margin-bottom: 10px; }
         .salary { font-size: 16px; color: #16a34a; font-weight: 600; margin-bottom: 10px; }
         .desc { font-size: 13px; color: #475569; line-height: 1.5; min-height: 60px; display: flex; align-items: center; justify-content: center; }
         
-        /* Tombol Aksi */
+        /* Tombol */
         .actions { display: flex; flex-direction: column; gap: 10px; }
         .btn { width: 100%; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.2s; text-align: center; }
-        .btn-primary { background: #0077b5; color: white; box-shadow: 0 4px 6px rgba(0,119,181,0.2); }
-        .btn-primary:hover { background: #005f91; }
+        .btn-primary { background: #0077b5; color: white; }
         .btn-secondary { background: #cbd5e1; color: #475569; }
-        .btn-secondary:hover { background: #b4fee2; background: #94a3b8; color: #1e293b; }
         
-        /* Pop-up Modals (Pajak & Game Over) */
+        /* Modals */
         .modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 100; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(4px); }
         .modal-content { background: white; color: #1e293b; padding: 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); width: 100%; }
         .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-        .tax-title { color: #dc2626; }
         
-        /* Responsif HP */
-        @media (max-height: 700px) {
-            .phone { height: 100vh; border: none; border-radius: 0; }
-            .notch { display: none; }
-        }
+        /* Progress Bar Minigame */
+        .progress-container { background: #e2e8f0; border-radius: 10px; height: 20px; width: 100%; margin: 15px 0; overflow: hidden; }
+        .progress-bar { background: #0077b5; height: 100%; width: 0%; transition: width 0.1s; }
+        
+        @media (max-height: 700px) { .phone { height: 100vh; border: none; border-radius: 0; } .notch { display: none; } }
     </style>
 </head>
 <body>
@@ -59,14 +50,12 @@
     <div class="notch"></div>
     <div class="header">LinkedOut 📱</div>
     
-    <!-- Status Batas Atas -->
     <div class="stats-bar">
         <div class="stat-box">📅 Hari <span id="day" style="color:#0077b5;">1</span></div>
         <div class="stat-box">💰 Rp <span id="money" style="color:#16a34a;">1.000.000</span></div>
         <div class="stat-box">🤯 Stres <span id="stress" class="danger">0</span>/100</div>
     </div>
 
-    <!-- Konten Utama -->
     <div class="content">
         <div class="job-card">
             <div class="company" id="job-company">PT. MAJU MUNDUR SEJAHTERA</div>
@@ -76,15 +65,30 @@
         </div>
         
         <div class="actions">
-            <button class="btn btn-primary" onclick="lamarKerja()">Lamar Pekerjaan & Lewat Hari</button>
+            <button class="btn btn-primary" onclick="mulaiMinigame()">Lamar Pekerjaan & Mulai Kerja</button>
             <button class="btn btn-secondary" onclick="skipDay()">Tolak & Cari yang Lain (-Rp50rb)</button>
         </div>
     </div>
     
+    <!-- Pop-up Minigame -->
+    <div id="game-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title" style="color: #0077b5;">💻 LEMBUR TIME!</h3>
+            <p id="game-instruction" style="font-size: 14px; margin-bottom: 10px; color:#475569;"></p>
+            <div style="font-size: 18px; font-weight: bold; color: #dc2626;">⏱️ Sisa Waktu: <span id="game-timer">5</span>s</div>
+            
+            <div class="progress-container">
+                <div id="game-progress" class="progress-bar"></div>
+            </div>
+            
+            <button id="tap-btn" class="btn btn-primary" style="background:#16a34a; padding: 20px 0; font-size: 16px;" onclick="hitungTap()">KLIK UNTUK KERJA! (0/10)</button>
+        </div>
+    </div>
+
     <!-- Pop-up Pajak -->
     <div id="tax-modal" class="modal">
         <div class="modal-content">
-            <h3 class="modal-title tax-title">🚨 PAJAK DAHSYAT!</h3>
+            <h3 class="modal-title" style="color:#dc2626;">🚨 PAJAK DAHSYAT!</h3>
             <p style="margin-bottom: 15px; font-size: 14px; color:#475569;">Sudah hari ke-<span id="tax-day">3</span>. Pemerintah mendeteksi sisa uangmu. Kamu dipotong pajak sebesar 47%!</p>
             <h2 style="color: #dc2626; margin-bottom: 20px;">-Rp <span id="tax-amount">0</span></h2>
             <button class="btn btn-primary" style="background:#dc2626;" onclick="closeTaxModal()">Bayar dengan Terpaksa</button>
@@ -94,190 +98,17 @@
     <!-- Pop-up Game Over -->
     <div id="gameover-modal" class="modal">
         <div class="modal-content">
-            <h3 class="modal-title" style="color: #65a30d;">💀 GAME OVER</h3>
-            <p id="gameover-reason" style="margin-bottom: 20px; font-size: 14px; color:#475569;"></p>
+            <h3 class="modal-title" style="color: #cbd5e1; background: #dc2626; padding: 5px; border-radius: 5px;">💀 GAME OVER</h3>
+            <div id="gameover-reason" style="margin-bottom: 20px; font-size: 14px; color:#475569; margin-top: 15px;"></div>
             <button class="btn btn-primary" onclick="resetGame()">Coba Cari Kerja Lagi</button>
         </div>
     </div>
 </div>
 
-<script>
-    // Database lowongan kerja random biar seru
-    const lowonganDatabase = [
-        { pt: "PT. Agensi Berdikari", title: "Social Media Intern", salary: 1500000, desc: "Jobdesk: Ngonten, edit video, megang 5 akun, merangkap jadi BA. Harus stanby 24 jam.", stress: 25 },
-        { pt: "CV. Berkah Judol", title: "Admin Slot Gacor", salary: 12000000, desc: "Gaji gede, bonus harian melimpah. Risiko: Tiap malam deg-degan digerebek polisi.", stress: 45 },
-        { pt: "Startup Unicorn Corp", title: "Junior Developer", salary: 6000000, desc: "Kerja WFO 6 hari seminggu. Diwajibkan lembur tanpa dibayar demi loyalitas perusahaan.", stress: 35 },
-        { pt: "Warung Seblak Mewah", title: "Kasir & Akuntan", salary: 2500000, desc: "Menghitung ribuan transaksi per hari secara manual. Menghadapi pembeli emosional.", stress: 20 },
-        { pt: "PT. AI Masa Depan", title: "Prompt Engineer", salary: 8000000, desc: "Ngobrol sama robot seharian. Sering kena mental karena robotnya lebih pinter dari kamu.", stress: 30 }
-    ];
+<!-- Penampung Data Tersembunyi -->
+<div id="job-card-data" style="display:none;"></div>
 
-    let day = 1;
-    let money = 1000000;
-    let stress = 0;
-
-    function updateStats() {
-        document.getElementById('day').innerText = day;
-        document.getElementById('money').innerText = money.toLocaleString('id-ID');
-        document.getElementById('stress').innerText = stress;
-        
-        // Cek kondisi kalah
-        if (money <= 0) {
-            showGameOver("Kamu bangkrut! Uangmu Rp 0, tidak bisa beli makan dan berakhir jadi gelandangan.");
-        } else if (stress >= 100) {
-            showGameOver("Kamu kena mental breakdown! Stres mencapai 100% karena tekanan dunia kerja.");
-        }
-    }
-
-    function generateJob() {
-        const randomJob = lowonganDatabase[Math.floor(Math.random() * lowonganDatabase.length)];
-        document.getElementById('job-company').innerText = randomJob.pt;
-        document.getElementById('job-title').innerText = randomJob.title;
-        document.getElementById('job-salary').innerText = randomJob.salary.toLocaleString('id-ID');
-        document.getElementById('job-desc').innerText = randomJob.desc;
-        // Simpan data stres dan gaji ke elemen tersembunyi/variabel
-        document.getElementById('job-card-data').dataset.salary = randomJob.salary;
-        document.getElementById('job-card-data').dataset.stress = randomJob.stress;
-    }
-
-    function checkTax() {
-        if (day % 3 === 0) {
-            let potongan = Math.round(money * 0.47);
-            money -= potongan;
-            
-            document.getElementById('tax-day').innerText = day;
-            document.getElementById('tax-amount').innerText = potongan.toLocaleString('id-ID');
-            document.getElementById('tax-modal').style.display = 'flex';
-        }
-    }
-
-    function closeTaxModal() {
-        document.getElementById('tax-modal').style.display = 'none';
-        updateStats();
-    }
-
-    function showGameOver(text) {
-        document.getElementById('gameover-reason').innerText = text;
-        document.getElementById('gameover-modal').style.display = 'flex';
-    }
-
-    function lamarKerja() {
-        const salary = parseInt(document.getElementById('job-card-data').dataset.salary) || 5000000;
-        const addStress = parseInt(document.getElementById('job-card-data').dataset.stress) || 30;
-        
-        money += salary;
-        stress += addStress;
-        day++;
-        
-        updateStats();
-        if (money > 0 && stress < 100) {
-            checkTax();
-            generateJob();
-        }
-    }
-
-    function skipDay() {
-        money -= 50000; // Biaya makan per hari jika menolak kerja
-        stress -= 5; if(stress < 0) stress = 0; // Menganggur mengurangi stres sedikit
-        day++;
-        
-        updateStats();
-        if (money > 0 && stress < 100) {
-            checkTax();
-        randomJob.salary.toLocaleString('id-ID');
-        document.getElementById('job-desc').innerText = randomJob.desc;
-        
-        // Simpan data stres dan gaji ke dataset elemen tersembunyi
-        const dataEl = document.getElementById('job-card-data');
-        dataEl.dataset.salary = randomJob.salary;
-        dataEl.dataset.stress = randomJob.stress;
-    }
-
-    function checkTax() {
-        if (day % 3 === 0) {
-            let potongan = Math.round(money * 0.47);
-            money -= potongan;
-            
-            document.getElementById('tax-day').innerText = day;
-            document.getElementById('tax-amount').innerText = potongan.toLocaleString('id-ID');
-            document.getElementById('tax-modal').style.display = 'flex';
-        }
-    }
-
-    function closeTaxModal() {
-        document.getElementById('tax-modal').style.display = 'none';
-        updateStats();
-    }
-
-    function showGameOver(text) {
-        document.getElementById('gameover-reason').innerHTML = `
-            <p style="margin-bottom: 15px;">${text}</p>
-            <strong style="display:block; margin-bottom: 10px; color:#1e293b;">Kamu bertahan selama: ${day} Hari</strong>
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <button class="btn" style="background:#1d9bf0; color:white; padding:10px;" onclick="shareGame('twitter')">🐦 Share ke X</button>
-                <button class="btn" style="background:#25d366; color:white; padding:10px;" onclick="shareGame('wa')">💬 Share WA</button>
-            </div>
-        `;
-        document.getElementById('gameover-modal').style.display = 'flex';
-    }
-
-    function lamarKerja() {
-        const dataEl = document.getElementById('job-card-data');
-        const salary = parseInt(dataEl.dataset.salary) || 5000000;
-        const addStress = parseInt(dataEl.dataset.stress) || 30;
-        
-        money += salary;
-        stress += addStress;
-        day++;
-        
-        updateStats();
-        if (money > 0 && stress < 100) {
-            checkTax();
-            generateJob();
-        }
-    }
-
-    function skipDay() {
-        money -= 50000; // Biaya hidup/makan harian saat nganggur
-        stress -= 8;    // Istirahat sedikit mengurangi stress
-        if (stress < 0) stress = 0;
-        day++;
-        
-        updateStats();
-        if (money > 0 && stress < 100) {
-            checkTax();
-            generateJob();
-        }
-    }
-
-    function shareGame(platform) {
-        const text = `Gue cuma bertahan ${day} hari di game Simulasi LinkedOut sebelum kena mental breakdown & dimiskinkan pajak 47%. Coba kalahkan rekor ketahanan kerja gue di sini: ${window.location.href}`;
-        let url = '';
-        if (platform === 'twitter') {
-            url = `https://twitter.com{encodeURIComponent(text)}`;
-        } else if (platform === 'wa') {
-            url = `https://whatsapp.com{encodeURIComponent(text)}`;
-        }
-        window.open(url, '_blank');
-    }
-
-    function resetGame() {
-        day = 1;
-        money = 1000000;
-        stress = 0;
-        document.getElementById('gameover-modal').style.display = 'none';
-        updateStats();
-        generateJob();
-    }
-
-    // Membuat penampung data tersembunyi saat game dimuat
-    const hiddenData = document.createElement('div');
-    hiddenData.id = 'job-card-data';
-    hiddenData.style.display = 'none';
-    document.body.appendChild(hiddenData);
-
-    // Jalankan inisialisasi game pertama kali
-    generateJob();
-    updateStats();
-</script>
+<!-- Memanggil logika JavaScript dari file eksternal -->
+<script src="script.js"></script>
 </body>
 </html>
