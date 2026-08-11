@@ -7,20 +7,12 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #f0f4f8; color: #334155; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; position: relative; }
-        
-        /* Frame HP - Tema Putih Bersih */
         .phone { width: 100%; max-width: 380px; height: 680px; border: 12px solid #cbd5e1; border-radius: 40px; background: #ffffff; color: #1e293b; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
         .notch { width: 120px; height: 20px; background: #cbd5e1; position: absolute; top: 0; left: 50%; transform: translateX(-50%); border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
-        
-        /* Header Aplikasi - Biru Muda Cerah */
         .header { background: #38bdf8; color: white; padding: 25px 15px 15px 15px; text-align: center; font-weight: bold; font-size: 20px; letter-spacing: 0.5px; }
-        
-        /* Status Bar */
         .stats-bar { display: flex; justify-content: space-between; background: #f0fdf4; padding: 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #e2e8f0; position: relative; }
         .stat-box { background: white; padding: 5px 12px; border-radius: 20px; border: 1px solid #e2e8f0; position: relative; }
         .danger { color: #ef4444; }
-        
-        /* Animasi Uang Floating */
         @keyframes floatUp {
             0% { opacity: 0; transform: translateY(0); }
             30% { opacity: 1; }
@@ -28,16 +20,12 @@
         }
         .money-animation { position: absolute; top: -5px; right: 10px; color: #16a34a; font-weight: bold; font-size: 14px; animation: floatUp 1.5s ease-out forwards; pointer-events: none; z-index: 50; }
         .money-loss { color: #ef4444; }
-
-        /* Konten */
         .content { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; justify-content: space-between; background: #f8fafc; }
         .job-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); text-align: center; margin-bottom: 15px; }
         .company { font-size: 11px; color: #0284c7; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; letter-spacing: 0.5px; }
         .title { font-size: 18px; color: #0f172a; font-weight: 700; margin-bottom: 10px; }
         .salary { font-size: 16px; color: #16a34a; font-weight: 600; margin-bottom: 10px; }
         .desc { font-size: 13px; color: #64748b; line-height: 1.5; min-height: 60px; display: flex; align-items: center; justify-content: center; }
-        
-        /* Tombol - Biru Muda Dominan */
         .actions { display: flex; flex-direction: column; gap: 8px; }
         .btn { width: 100%; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s; text-align: center; }
         .btn-primary { background: #0ea5e9; color: white; box-shadow: 0 4px 6px rgba(14, 165, 233, 0.2); }
@@ -46,71 +34,52 @@
         .btn-side:hover { background: #059669; }
         .btn-secondary { background: #e2e8f0; color: #64748b; }
         .btn-secondary:hover { background: #cbd5e1; color: #334155; }
-        
-        /* Modals */
         .modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 100; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(4px); }
         .modal-content { background: white; color: #1e293b; padding: 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); width: 100%; border: 1px solid #e2e8f0; }
         .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-        
-        /* Input Ketik untuk Game Mengetik */
         .type-input { width: 100%; padding: 10px; border: 2px solid #38bdf8; border-radius: 8px; font-size: 15px; margin-top: 10px; text-align: center; outline: none; }
         .word-target { font-size: 18px; font-weight: bold; color: #0f172a; background: #e2e8f0; padding: 8px; border-radius: 8px; margin: 10px 0; letter-spacing: 1px; word-break: break-all; }
-
-        /* Progress Bar Minigame */
         .progress-container { background: #e2e8f0; border-radius: 10px; height: 18px; width: 100%; margin: 15px 0; overflow: hidden; }
         .progress-bar { background: #38bdf8; height: 100%; width: 0%; transition: width 0.1s; }
-        
-        /* Kurir Mini Game Elements */
         .food-box-container { display: flex; justify-content: center; height: 100px; align-items: center; margin: 20px 0; position: relative; }
         .food-item { padding: 15px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 12px; font-size: 28px; cursor: pointer; transition: transform 0.1s; user-select: none; position: absolute; }
         .food-item:active { transform: scale(0.9); }
-        
         @media (max-height: 700px) { .phone { height: 100vh; border: none; border-radius: 0; } .notch { display: none; } }
     </style>
 </head>
 <body>
-
 <div class="phone" id="phone-app">
     <div class="notch"></div>
     <div class="header">LinkedOut 📱</div>
-    
     <div class="stats-bar">
         <div class="stat-box">📅 Hari <span id="day" style="color:#0ea5e9;">1</span></div>
         <div class="stat-box" id="money-box">💰 Rp <span id="money" style="color:#16a34a;">1.000.000</span></div>
         <div class="stat-box">🤯 Stres <span id="stress" class="danger">0</span>/100</div>
     </div>
-
     <div class="content">
         <div class="job-card">
-            <div class="company" id="job-company">MEMUAT...</div>
-            <h3 class="title" id="job-title">Mencari Lowongan</h3>
-            <div class="salary">Gaji: Rp <span id="job-salary">0</span></div>
-            <p class="desc" id="job-desc">Silakan tunggu sebentar...</p>
+            <div class="company" id="job-company">PT. MAJU MUNDUR SEJAHTERA</div>
+            <h3 class="title" id="job-title">Karyawan Startup Mager</h3>
+            <div class="salary">Gaji: Rp <span id="job-salary">5.000.000</span></div>
+            <p class="desc" id="job-desc">Kerja rodi 24/7 demi pertumbuhan perusahaan yang hampir bangkrut.</p>
         </div>
-        
         <div class="actions">
             <button class="btn btn-primary" onclick="mulaiMinigameUtama()">Lamar Pekerjaan & Mulai Kerja</button>
             <button class="btn btn-side" onclick="mulaiMinigameKurir()">Kerja Sampingan: Kurir Makanan 🛵</button>
             <button class="btn btn-secondary" onclick="skipDay()">Tolak & Cari yang Lain (-Rp50rb)</button>
         </div>
     </div>
-    
-    <!-- Pop-up Minigame Utama (Variatif: Tap / Ketik) -->
     <div id="game-modal" class="modal">
         <div class="modal-content">
             <h3 class="modal-title" id="game-modal-title" style="color: #0ea5e9;">💻 LEMBUR TIME!</h3>
             <p id="game-instruction" style="font-size: 14px; margin-bottom: 10px; color:#64748b;"></p>
             <div style="font-size: 18px; font-weight: bold; color: #ef4444;">⏱️ Sisa Waktu: <span id="game-timer">5</span>s</div>
-            
-            <!-- Elemen Khusus Game Click Tap -->
             <div id="tap-game-elements">
                 <div class="progress-container">
                     <div id="game-progress" class="progress-bar"></div>
                 </div>
                 <button id="tap-btn" class="btn btn-primary" style="background:#22c55e; padding: 18px 0; font-size: 16px; box-shadow: none;" onclick="hitungTap()">KLIK UNTUK KERJA! (0/10)</button>
             </div>
-
-            <!-- Elemen Khusus Game Ketik Kata -->
             <div id="type-game-elements" style="display:none;">
                 <div class="word-target" id="target-word-display">KODE_EROR</div>
                 <input type="text" id="type-game-input" class="type-input" placeholder="Ketik kata di atas sini..." oninput="cekInputKetik()">
@@ -118,23 +87,18 @@
             </div>
         </div>
     </div>
-
-    <!-- Pop-up Minigame Kurir Makanan -->
     <div id="kurir-modal" class="modal">
         <div class="modal-content">
             <h3 class="modal-title" style="color: #10b981;">🛵 GOJEK-O / GRAB-O</h3>
             <p style="font-size: 13px; color:#64748b;">Klik pada makanan yang berpindah-pindah secepatnya untuk mengantar pesanan!</p>
             <div style="font-size: 16px; font-weight: bold; margin: 8px 0;">📦 Pesanan Terantar: <span id="delivery-count" style="color:#10b981;">0</span></div>
             <div style="font-size: 16px; font-weight: bold; color: #ef4444;">⏱️ Waktu Shift: <span id="kurir-timer">8</span>s</div>
-            
             <div class="food-box-container">
                 <div class="food-item" id="food-target-btn" onclick="tangkapMakanan()">🍔</div>
             </div>
             <p style="font-size: 11px; color:#94a3b8;">Gaji: Rp 35.000 per pesanan terantar. Stres +3 per pesanan.</p>
         </div>
     </div>
-
-    <!-- Pop-up Pajak -->
     <div id="tax-modal" class="modal">
         <div class="modal-content">
             <h3 class="modal-title" style="color:#ef4444;">🚨 PAJAK DAHSYAT!</h3>
@@ -143,8 +107,231 @@
             <button class="btn btn-primary" style="background:#ef4444;" onclick="closeTaxModal()">Bayar dengan Terpaksa</button>
         </div>
     </div>
-
-    <!-- Pop-up Game Over -->
     <div id="gameover-modal" class="modal">
         <div class="modal-content">
-💀 GAME OVERCoba Cari Kerja Lagi
+            <h3 class="modal-title" style="color: white; background: #ef4444; padding: 8px; border-radius: 12px;">💀 GAME OVER</h3>
+            <div id="gameover-reason" style="margin-bottom: 20px; font-size: 14px; color:#64748b; margin-top: 15px;"></div>
+            <button class="btn btn-primary" onclick="resetGame()">Coba Cari Kerja Lagi</button>
+        </div>
+    </div>
+</div>
+<script>
+const lowonganDatabase = [
+    { pt: "PT. Agensi Berdikari", title: "Social Media Intern", salary: 1500000, desc: "Jobdesk: Ngonten, edit video, megang 5 akun. Harus standby 24 jam.", stress: 22, tipeGame: "click", tugas: "Balas chat revisi klien secepatnya!" },
+    { pt: "CV. Berkah Judol", title: "Admin Slot Gacor", salary: 12000000, desc: "Gaji gede, bonus harian melimpah. Risiko: Tiap malam deg-degan digerebek polisi.", stress: 45, tipeGame: "type", tugas: "KETIK KATA KUNCI AMANKAN SERVER:", kataTarget: "BERSIHKAN_LOGS_SEKARANG" },
+    { pt: "Startup Unicorn Corp", title: "Junior Developer", salary: 6000000, desc: "Kerja WFO 6 hari seminggu. Diwajibkan lembur tanpa dibayar demi loyalitas.", stress: 32, tipeGame: "type", tugas: "KETIK SYNTAX PERBAIKAN BUG:", kataTarget: "sudo_systemctl_restart" },
+    { pt: "Warung Seblak Mewah", title: "Kasir & Akuntan", salary: 2500000, desc: "Menghitung ribuan transaksi manual. Menghadapi pembeli emosional.", stress: 18, tipeGame: "click", tugas: "Hitung kembalian emak-emak ngamuk!" },
+    { pt: "PT. AI Masa Depan", title: "Prompt Engineer", salary: 8000000, desc: "Ngobrol sama robot seharian. Sering kena mental karena AI-nya suka ngambek.", stress: 28, tipeGame: "type", tugas: "KETIK PROMPT PENENANG AI:", kataTarget: "JanganNgambekRobotSayang" }
+];
+const daftarMakanan = ["🍔", "🍕", "🍜", "🍟", "🥤", "🍗", "🍩"];
+let day = 1;
+let money = 1000000;
+let stress = 0;
+let lowonganAktif = {};
+let tumpukanClick = 0;
+const targetClick = 12; 
+let sisaWaktu = 5;
+let timerInterval = null;
+let jumlahPesanan = 0;
+let sisaWaktuKurir = 8;
+let kurirInterval = null;
+function picuAnimasiUang(jumlah, apakahMinus = false) {
+    const moneyBox = document.getElementById('money-box');
+    if (!moneyBox) return;
+    const teksAnimasi = document.createElement('span');
+    teksAnimasi.className = 'money-animation';
+    if (apakahMinus) {
+        teksAnimasi.classList.add('money-loss');
+        teksAnimasi.innerText = `-Rp ${jumlah.toLocaleString('id-ID')}`;
+    } else {
+        teksAnimasi.innerText = `+Rp ${jumlah.toLocaleString('id-ID')}`;
+    }
+    moneyBox.appendChild(teksAnimasi);
+    setTimeout(() => { teksAnimasi.remove(); }, 1500);
+}
+function updateStats() {
+    document.getElementById('day').innerText = day;
+    document.getElementById('money').innerText = money.toLocaleString('id-ID');
+    document.getElementById('stress').innerText = stress;
+    if (money <= 0) {
+        showGameOver("Kamu bangkrut! Uangmu habis total, tidak bisa bayar kosan dan makan seblak.");
+    } else if (stress >= 100) {
+        showGameOver("Kamu kena mental breakdown! Tingkat stres mencapai 100% karena eksploitasi dunia kerja.");
+    }
+}
+function generateJob() {
+    lowonganAktif = lowonganDatabase[Math.floor(Math.random() * lowonganDatabase.length)];
+    document.getElementById('job-company').innerText = lowonganAktif.pt;
+    document.getElementById('job-title').innerText = lowonganAktif.title;
+    document.getElementById('job-salary').innerText = lowonganAktif.salary.toLocaleString('id-ID');
+    document.getElementById('job-desc').innerText = lowonganAktif.desc;
+}
+function selesaiSiklusHari() {
+    updateStats();
+    if (money > 0 && stress < 100) {
+        checkTax();
+        generateJob();
+    }
+}
+function skipDay() {
+    if (money <= 0 || stress >= 100) return;
+    money -= 50000;
+    stress -= 8;
+    if (stress < 0) stress = 0;
+    day++;
+    picuAnimasiUang(50000, true);
+    selesaiSiklusHari();
+}
+function checkTax() {
+    if (day % 3 === 0) {
+        let potongan = Math.round(money * 0.47);
+        money -= potongan;
+        document.getElementById('tax-day').innerText = day;
+        document.getElementById('tax-amount').innerText = potongan.toLocaleString('id-ID');
+        document.getElementById('tax-modal').style.display = 'flex';
+        picuAnimasiUang(potongan, true);
+    }
+}
+function closeTaxModal() {
+    document.getElementById('tax-modal').style.display = 'none';
+    updateStats();
+}
+function mulaiMinigameUtama() {
+    if (money <= 0 || stress >= 100) return;
+    sisaWaktu = 5;
+    document.getElementById('game-timer').innerText = sisaWaktu;
+    document.getElementById('game-modal').style.display = 'flex';
+    if (lowonganAktif.tipeGame === "click") {
+        document.getElementById('tap-game-elements').style.display = 'block';
+        document.getElementById('type-game-elements').style.display = 'none';
+        tumpukanClick = 0;
+        document.getElementById('game-instruction').innerText = `Tugasmu: ${lowonganAktif.tugas}`;
+        document.getElementById('game-progress').style.width = "0%";
+        document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (0/${targetClick})`;
+    } else if (lowonganAktif.tipeGame === "type") {
+        document.getElementById('tap-game-elements').style.display = 'none';
+        document.getElementById('type-game-elements').style.display = 'block';
+        document.getElementById('game-instruction').innerText = lowonganAktif.tugas;
+        document.getElementById('target-word-display').innerText = lowonganAktif.kataTarget;
+        document.getElementById('type-game-input').value = "";
+        setTimeout(() => { document.getElementById('type-game-input').focus(); }, 100);
+    }
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        sisaWaktu--;
+        document.getElementById('game-timer').innerText = sisaWaktu;
+        if (sisaWaktu <= 0) {
+            clearInterval(timerInterval);
+            gagalMinigameUtama();
+        }
+    }, 1000);
+}
+function hitungTap() {
+    tumpukanClick++;
+    let persentase = (tumpukanClick / targetClick) * 100;
+    document.getElementById('game-progress').style.width = `${persentase}%`;
+    document.getElementById('tap-btn').innerText = `KLIK UNTUK KERJA! (${tumpukanClick}/${targetClick})`;
+    if (tumpukanClick >= targetClick) {
+        clearInterval(timerInterval);
+        suksesMinigameUtama();
+    }
+}
+function cekInputKetik() {
+    const inputVal = document.getElementById('type-game-input').value;
+    if (inputVal === lowonganAktif.kataTarget) {
+        clearInterval(timerInterval);
+        suksesMinigameUtama();
+    }
+}
+function suksesMinigameUtama() {
+    document.getElementById('game-modal').style.display = 'none';
+    money += lowonganAktif.salary;
+    stress += lowonganAktif.stress;
+    day++;
+    picuAnimasiUang(lowonganAktif.salary, false);
+    alert(`🎉 Kerja Bagus! Gaji Rp ${lowonganAktif.salary.toLocaleString('id-ID')} masuk rekening.`);
+    selesaiSiklusHari();
+}
+function gagalMinigameUtama() {
+    document.getElementById('game-modal').style.display = 'none';
+    stress += 35;
+    day++;
+    alert("❌ KAMU DIPECAT! Kerjamu lambat dan banyak eror. Gaji hangus, Bos memarahimu (Stres +35).");
+    selesaiSiklusHari();
+}
+function mulaiMinigameKurir() {
+    if (money <= 0 || stress >= 100) return;
+    jumlahPesanan = 0;
+    sisaWaktuKurir = 8;
+    document.getElementById('delivery-count').innerText = jumlahPesanan;
+    document.getElementById('kurir-timer').innerText = sisaWaktuKurir;
+    document.getElementById('kurir-modal').style.display = 'flex';
+    acakPosisiMakanan();
+    clearInterval(kurirInterval);
+    kurirInterval = setInterval(() => {
+        sisaWaktuKurir--;
+        document.getElementById('kurir-timer').innerText = sisaWaktuKurir;
+        if (sisaWaktuKurir <= 0) {
+            clearInterval(kurirInterval);
+            selesaiKerjaKurir();
+        }
+    }, 1000);
+}
+function acakPosisiMakanan() {
+    const targetBtn = document.getElementById('food-target-btn');
+    if (!targetBtn) return;
+    targetBtn.innerText = daftarMakanan[Math.floor(Math.random() * daftarMakanan.length)];
+    const xRand = Math.floor(Math.random() * 160) - 80; 
+    const yRand = Math.floor(Math.random() * 30) - 15; 
+    targetBtn.style.transform = `translate(${xRand}px, ${yRand}px)`;
+}
+function tangkapMakanan() {
+    jumlahPesanan++;
+    document.getElementById('delivery-count').innerText = jumlahPesanan;
+    acakPosisiMakanan();
+}
+function selesaiKerjaKurir() {
+    document.getElementById('kurir-modal').style.display = 'none';
+    const totalGajiKurir = jumlahPesanan * 35000;
+    const totalStresKurir = jumlahPesanan * 3;
+    money += totalGajiKurir;
+    stress += totalStresKurir;
+    day++;
+    if(totalGajiKurir > 0) {
+        picuAnimasiUang(totalGajiKurir, false);
+    }
+    alert(`🛵 Shift Selesai! Mengantar ${jumlahPesanan} pesanan. Upah Rp ${totalGajiKurir.toLocaleString('id-ID')} cair, Stres +${totalStresKurir} karena macet.`);
+    selesaiSiklusHari();
+}
+function showGameOver(text) {
+    document.getElementById('gameover-reason').innerHTML = `
+        <p style="margin-bottom: 15px;">${text}</p>
+        <strong style="display:block; margin-bottom: 15px; color:#1e293b;">Kamu berhasil bertahan hidup selama: ${day} Hari</strong>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="btn" style="background:#1d9bf0; color:white; box-shadow:none;" onclick="shareGame('twitter')">🐦 Share Hasil ke X (Twitter)</button>
+            <button class="btn" style="background:#25d366; color:white; box-shadow:none;" onclick="shareGame('wa')">💬 Share ke WhatsApp</button>
+        </div>
+    `;
+    document.getElementById('gameover-modal').style.display = 'flex';
+}
+function shareGame(platform) {
+    const text = `Gue cuma bertahan ${day} hari di game Simulasi LinkedOut! Udah narik kurir makanan & kantoran tetap dimiskinkan pajak 47%. Coba rekor lu: ${window.location.href}`;
+    let url = platform === 'twitter' 
+        ? `https://twitter.com{encodeURIComponent(text)}`
+        : `https://whatsapp.com{encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
+function resetGame() {
+    day = 1;
+    money = 1000000;
+    stress = 0;
+    document.getElementById('gameover-modal').style.display = 'none';
+    updateStats();
+    generateJob();
+}
+generateJob();
+updateStats();
+</script>
+</body>
+</html>
+
